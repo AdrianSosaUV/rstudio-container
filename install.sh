@@ -199,10 +199,6 @@ install_rpm () {
   ver=$3
   echo "User install from RPM installer ${installer_name}..."
   install_pre "${os}" "${ver}"
-  yes=
-  if [[ "${RUN_UNATTENDED}" -ne "0" ]]; then
-      yes="-y"
-  fi
   case $os in
     "RedHat" | "CentOS")
       if ! has_sudo "yum"; then
@@ -212,7 +208,7 @@ install_rpm () {
       echo "Updating package indexes..."
       ${SUDO} yum check-update -y
       echo "Installing ${installer_name}..."
-      ${SUDO} yum install ${yes} "${installer_name}"
+      ${SUDO} yum install -y "${installer_name}"
       ;;
     "LEAP12" | "LEAP15" | "SLES12" | "SLES15")
       if ! has_sudo "zypper"; then
@@ -247,19 +243,15 @@ install_pre () {
 # Installs EPEL for RHEL/CentOS
 install_epel () {
   ver=$1
-  yes=
-  if [[ "${RUN_UNATTENDED}" -ne "0" ]]; then
-      yes="-y"
-  fi
   case $ver in
     "6")
-      ${SUDO} yum install ${yes} https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+      ${SUDO} yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
       ;;
     "7")
-      ${SUDO} yum install ${yes} https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+      ${SUDO} yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
       ;;
     "8")
-      ${SUDO} yum install ${yes} https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      ${SUDO} yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
       ;;
   esac
 }
