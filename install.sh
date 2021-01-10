@@ -134,10 +134,6 @@ download_url () {
       "RedHat" | "CentOS")
         echo "${CDN_URL}/centos-${ver}/pkgs/${name}"
         ;;
-        else
-          echo "${CDN_URL}/opensuse-15/pkgs/${name}"
-        fi
-        ;;
     esac
   fi
 }
