@@ -414,4 +414,4 @@ case ${SCRIPT_ACTION} in
   "-h"|"help"|*)
     do_show_usage
     ;;
-esacl8_2.noarch is already installed.
+esac
