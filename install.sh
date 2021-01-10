@@ -7,17 +7,6 @@ SCRIPT_ACTION=${SCRIPT_ACTION:-install}
 
 # Set to the full version to install. Must be either available on S3 or in the working directory
 R_VERSION=${R_VERSION:-4.0.3}
-# The version may optionally be provided as a second argument
-if [[ "$2" != "" ]]; then
-  R_VERSION=${R_VERSION:-$2}
-fi
-
-# Run unattended; show no questions, assume default answers.
-# May also be set by the '-y'/'yes' options on the install action.
-RUN_UNATTENDED=${RUN_UNATTENDED:-0}
-if [[ "$3" == "-y" || "$3" == "yes" ]]; then
-  RUN_UNATTENDED=1
-fi
 
 SUDO=
 if [[ $(id -u) != "0" ]]; then
@@ -27,23 +16,6 @@ fi
 # The root of the S3 URL for downloads
 CDN_URL='https://cdn.rstudio.com/r'
 
-# The URL for listing available R versions
-VERSIONS_URL="${CDN_URL}/versions.json"
-
-R_VERSIONS=$(curl -s ${VERSIONS_URL} | \
-  # Matches the JSON line that contains the r versions
-  grep r_versions | \
-  # Gets the value of the `r_version` property (e.g., "[ 3.0.0, 3.0.3, ... ]")
-  cut -f2 -d ":" | \
-  # Removes the opening and closing brackets of the array
-  cut -f2 -d "[" | cut -f1 -d "]" | \
-  # Removes the quotes and commas from the values
-  sed -e 's/\"//g' | sed -e 's/\,//g' | \
-  # Appends a placeholder to the end of the string. Without an extra element at the
-  # end, the last version will be missing after we reverse the order.
-  { IFS= read -r vers; printf '%s placeholder' "$vers"; } | \
-  # Reverses the order of the list
-  ( while read -d ' ' f;do g="$f${g+ }$g" ;done;echo "$g" ))
 
 # Returns the OS
 detect_os () {
@@ -91,21 +63,6 @@ detect_installer_type () {
   esac
 }
 
-# Lists available R versions
-show_versions () {
-  for v in ${R_VERSIONS}
-  do
-    echo "  ${v}"
-  done
-}
-
-# Same as above but for automation purposes
-do_show_versions () {
-  for v in ${R_VERSIONS}
-  do
-    echo "${v}"
-  done
-}
 
 # Returns the installer name for a given version and OS
 download_name () {
@@ -141,7 +98,6 @@ download_url () {
 # Given a version or "latest", returns a version to download. If no
 # valid input version is given, returns blank ("").
 get_version () {
-  versions=(${R_VERSIONS})
   version_input=$1
   if [ "${version_input}" = "latest" ]; then
     version_input=${versions[0]}
@@ -277,21 +233,12 @@ do_download () {
 
     if [[ -z "${wget_rc}" ]]; then
         echo "Downloading ${url}..."
-
-        if [[ "${RUN_UNATTENDED}" -ne "0" ]]; then
           wget -q --header "User-Agent: ${RS_USER_AGENT:-r-builds}" "${url}"
-        else
-          wget --progress=bar --header "User-Agent: ${RS_USER_AGENT:-r-builds}" "${url}"
-        fi
         rc=$?
     # Or, If curl is around, use that.
     elif [[ -z "${curl_rc}" ]]; then
         echo "Downloading ${url}..."
-        if [[ "${RUN_UNATTENDED}" -ne "0" ]]; then
           curl -fsSL -H "User-Agent: ${RS_USER_AGENT:-r-builds}" --output "${file_name}" "${url}"
-        else
-          curl -fL -H "User-Agent: ${RS_USER_AGENT:-r-builds}" --output "${file_name}" --progress-bar "${url}"
-        fi
         rc=$?
     # Otherwise, we can't go on.
     else
