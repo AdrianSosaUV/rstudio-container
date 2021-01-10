@@ -6,7 +6,7 @@ SCRIPT_ACTION=$1
 SCRIPT_ACTION=${SCRIPT_ACTION:-install}
 
 # Set to the full version to install. Must be either available on S3 or in the working directory
-R_VERSION=${R_VERSION:-}
+R_VERSION=${R_VERSION:-4.0.3}
 # The version may optionally be provided as a second argument
 if [[ "$2" != "" ]]; then
   R_VERSION=${R_VERSION:-$2}
