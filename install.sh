@@ -259,6 +259,7 @@ install_epel () {
       ${SUDO} yum install ${yes} https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
       ;;
     "8")
+      ${SUDO} yum install ${yes} https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
       ;;
   esac
 }
