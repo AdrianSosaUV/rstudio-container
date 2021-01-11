@@ -11,6 +11,7 @@ if [[ $(id -u) != "0" ]]; then
 fi
 
 ${SUDO} yum update
+${SUDO} yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 ${SUDO} ARCH=$( /bin/arch )
 ${SUDO} subscription-manager repos --enable "codeready-builder-for-rhel-8-${ARCH}-rpms"
 ${SUDO} wget https://download2.rstudio.org/server/centos8/x86_64/rstudio-server-rhel-${RSTUDIO_VERSION}-x86_64.rpm
