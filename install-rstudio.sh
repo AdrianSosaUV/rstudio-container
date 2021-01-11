@@ -14,4 +14,4 @@ ${SUDO} yum update
 ${SUDO} ARCH=$( /bin/arch )
 ${SUDO} subscription-manager repos --enable "codeready-builder-for-rhel-8-${ARCH}-rpms"
 ${SUDO} wget https://download2.rstudio.org/server/centos8/x86_64/rstudio-server-rhel-${RSTUDIO_VERSION}-x86_64.rpm
-${SUDO} yum install rstudio-server-rhel-${RSTUDIO_VERSION}-x86_64.rpm
+${SUDO} yum install -y rstudio-server-rhel-${RSTUDIO_VERSION}-x86_64.rpm
